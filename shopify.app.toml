@@ -1,0 +1,27 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+name = "HubOn Node Js"
+client_id = "c548eac429206c9553a0f43be2ceb63e"
+application_url = "https://skip-bon-sir-alternatively.trycloudflare.com"
+embedded = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_products"
+
+[auth]
+redirect_urls = [
+  "https://skip-bon-sir-alternatively.trycloudflare.com/auth/callback",
+  "https://skip-bon-sir-alternatively.trycloudflare.com/auth/shopify/callback",
+  "https://skip-bon-sir-alternatively.trycloudflare.com/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2023-07"
+
+[pos]
+embedded = false
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "quickstart-988ff0d3.myshopify.com"
