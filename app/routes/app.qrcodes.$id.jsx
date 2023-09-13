@@ -7,7 +7,7 @@ import {
     useSubmit,
     useNavigate,
 } from "@remix-run/react";
-import { authenticate } from "../shopify.server";
+import { authenticate } from "~/shopify.server";
 import {
     Card,
     Bleed,
@@ -27,8 +27,8 @@ import {
 } from "@shopify/polaris";
 import { ImageMajor } from "@shopify/polaris-icons";
 
-import db from "../db.server";
-import { getQRCode, validateQRCode } from "../models/QRCode.server";
+import db from "~/db.server";
+import { getQRCode, validateQRCode } from "~/models/QRCode.server";
 
 export async function loader({ request, params }) {
     const { admin } = await authenticate.admin(request);
@@ -46,7 +46,6 @@ export async function loader({ request, params }) {
 export async function action({ request, params }) {
     const { session } = await authenticate.admin(request);
     const { shop } = session;
-
     /** @type {any} */
     const data = {
         ...Object.fromEntries(await request.formData()),
@@ -76,6 +75,7 @@ export default function QRCodeForm() {
     const errors = useActionData()?.errors || {};
 
     const qrCode = useLoaderData();
+
     const [formState, setFormState] = useState(qrCode);
     const [cleanFormState, setCleanFormState] = useState(qrCode);
     const isDirty = JSON.stringify(formState) !== JSON.stringify(cleanFormState);
@@ -124,12 +124,15 @@ export default function QRCodeForm() {
     }
 
     return (
-        <Page>
-            <ui-title-bar title={qrCode.id ? "Edit QR code" : "Create new QR code"}>
+        <Page backAction={{ url: '/app/qrcodes' }}
+            title={qrCode.id ? "Edit QR code" : "Create new QR code"}
+            compactTitle
+        >
+            {/* <ui-title-bar title={qrCode.id ? "Edit QR code" : "Create new QR code"}>
                 <button variant="breadcrumb" onClick={() => navigate("/app")}>
                     QR codes
                 </button>
-            </ui-title-bar>
+            </ui-title-bar> */}
             <Layout>
                 <Layout.Section>
                     <VerticalStack gap="5">

@@ -9,9 +9,7 @@ import {
 
 import styles from "./styles/app.css"
 
-export function links() {
-  return [{ rel: "stylesheet", href: styles }]
-}
+export const links = () => [{ rel: "stylesheet", href: styles }];
 
 export default function App() {
   return (
