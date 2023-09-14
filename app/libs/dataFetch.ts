@@ -15,7 +15,7 @@ interface FetchOptions {
 }
 
 export function useCustomFetch<T>(
-    key: [string, any], // Key as an array [keyName, keyVariable]
+    key: [string, any] | string, // Key as an array [keyName, keyVariable]
     fetchFunction: FetchFunction<T>,
     options: FetchOptions = {}
 ) {

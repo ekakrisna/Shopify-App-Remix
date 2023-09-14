@@ -22,6 +22,7 @@ import { DetailedPopUpMajor, FilterMajor } from "@shopify/polaris-icons";
 import { useCallback, useState } from "react";
 import { getHubApi } from "~/api";
 import { useCustomFetch } from "~/libs/dataFetch";
+import { authenticate } from "~/shopify.server";
 
 export const loader = async ({ request }) => {
   const searchParams = new URLSearchParams(request.url.split('?')[1] || '');
@@ -30,6 +31,51 @@ export const loader = async ({ request }) => {
   const search = searchParams.get('search') || "";
   const query = { page_size, page, search }
   return json({ query });
+}
+
+export async function action({ request }) {
+  const { admin } = await authenticate.admin(request);
+
+  const color = ["Red", "Orange", "Yellow", "Green"][
+    Math.floor(Math.random() * 4)
+  ];
+  const response = await admin.graphql(
+    `#graphql
+      mutation populateProduct($input: ProductInput!) {
+        productCreate(input: $input) {
+          product {
+            id
+            title
+            handle
+            status
+            variants(first: 10) {
+              edges {
+                node {
+                  id
+                  price
+                  barcode
+                  createdAt
+                }
+              }
+            }
+          }
+        }
+      }`,
+    {
+      variables: {
+        input: {
+          title: `${color} Snowboard`,
+          variants: [{ price: Math.random() * 100 }],
+        },
+      },
+    }
+  );
+
+  const responseJson = await response.json();
+
+  return json({
+    product: responseJson.data.productCreate.product,
+  });
 }
 
 function truncate(str, { length = 25 } = {}) {
@@ -191,12 +237,12 @@ export default function HubsPage() {
 
   return (
     <Page backAction={{ url: '/app' }}>
-      <ui-title-bar title="Hubs" />
+      <ui-title-bar title="Locations" />
       <Layout>
         <Layout.Section>
           <Card>
             <div className="mb-4">
-              <div className="flex items-center gap-1 mb-2">
+              <div className="flex items-center gap-2 mb-2">
                 <FilterMajor width="24" />
                 <Text as="p">Filter</Text>
               </div>

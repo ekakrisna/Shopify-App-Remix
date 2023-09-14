@@ -1,19 +1,20 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-name = "HubOn Node Js"
-client_id = "c548eac429206c9553a0f43be2ceb63e"
-application_url = "https://meals-boom-h-kinds.trycloudflare.com"
+name = "HubOn App"
+client_id = "9d53df60ffa22ca785f6b5b2d0d6d60d"
+application_url = "https://dna-salvation-pitch-discounted.trycloudflare.com"
 embedded = true
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_products,write_products"
+scopes = "read_products,write_products,read_themes,write_themes,read_customers,read_orders"
+use_legacy_install_flow = true
 
 [auth]
 redirect_urls = [
-  "https://meals-boom-h-kinds.trycloudflare.com/auth/callback",
-  "https://meals-boom-h-kinds.trycloudflare.com/auth/shopify/callback",
-  "https://meals-boom-h-kinds.trycloudflare.com/api/auth/callback"
+  "https://dna-salvation-pitch-discounted.trycloudflare.com/auth/callback",
+  "https://dna-salvation-pitch-discounted.trycloudflare.com/auth/shopify/callback",
+  "https://dna-salvation-pitch-discounted.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
@@ -24,4 +25,4 @@ embedded = false
 
 [build]
 automatically_update_urls_on_dev = true
-dev_store_url = "quickstart-988ff0d3.myshopify.com"
+dev_store_url = "first-store-hubon.myshopify.com"

@@ -25,6 +25,7 @@ export default function App() {
         </Link>
         <Link to="/app/qrcodes">Qrcodes</Link>
         <Link to="/app/hubs">Hubs</Link>
+        <Link to="/app/locations">Locations</Link>
       </ui-nav-menu>
       <Outlet />
     </AppProvider>

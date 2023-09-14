@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 
-interface HttpClient extends AxiosInstance {}
+interface HttpClient extends AxiosInstance { }
 
 const httpClient: HttpClient = axios.create({
   baseURL: `https://hub-on-api--hub-on-gardeneur.sandboxes.run/api/v1`,
