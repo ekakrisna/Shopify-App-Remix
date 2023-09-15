@@ -18476,17 +18476,13 @@ ${errorInfo.componentStack}`);
   var Checkout_default = reactExtension("purchase.checkout.contact.render-after", () => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(App, {}));
   function App() {
     var _a;
-    const [checked, setChecked] = (0, import_react11.useState)(false);
-    const metafieldNamespace = "metafields.custom.hubon";
-    const metafieldKey = "custom.hubon";
+    const metafieldNamespace = "custom";
+    const metafieldKey = "hubon";
     const deliveryInstructions = useMetafield({
       namespace: metafieldNamespace,
       key: metafieldKey
     });
     const applyMetafieldsChange = useApplyMetafieldsChange();
-    const handleChange = () => {
-      setChecked(!checked);
-    };
     const [data, setData] = (0, import_react11.useState)([]);
     const [isLoading, setIsLoading] = (0, import_react11.useState)(true);
     (0, import_react11.useEffect)(() => {
@@ -18505,17 +18501,25 @@ ${errorInfo.componentStack}`);
       });
     }, []);
     return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(BlockStack2, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Text, { size: "large", emphasis: "bold", children: "App testing delivery" }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Text, { size: "large", emphasis: "bold", children: "HubOn Delivery" }),
       isLoading ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(SkeletonText, {}) : /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
         Select,
         {
           label: "Select hub",
-          value: 2,
+          value: deliveryInstructions == null ? void 0 : deliveryInstructions.value,
           options: (_a = data == null ? void 0 : data.hubs) == null ? void 0 : _a.map((hub) => __spreadProps(__spreadValues({}, hub), { label: hub.name })),
-          autocomplete: true
+          autocomplete: true,
+          onChange: (value) => {
+            applyMetafieldsChange({
+              type: "updateMetafield",
+              namespace: metafieldNamespace,
+              key: metafieldKey,
+              valueType: "string",
+              value
+            });
+          }
         }
       )
     ] });
   }
 })();
-//# sourceMappingURL=checkout-ui.js.map

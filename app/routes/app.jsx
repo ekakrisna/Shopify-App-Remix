@@ -13,7 +13,6 @@ export async function loader({ request }) {
 
   return json({ apiKey: process.env.SHOPIFY_API_KEY });
 }
-
 export default function App() {
   const { apiKey } = useLoaderData();
 
@@ -26,6 +25,7 @@ export default function App() {
         <Link to="/app/qrcodes">Qrcodes</Link>
         <Link to="/app/hubs">Hubs</Link>
         <Link to="/app/locations">Locations</Link>
+        <Link to="/app/locations">Delivery</Link>
       </ui-nav-menu>
       <Outlet />
     </AppProvider>

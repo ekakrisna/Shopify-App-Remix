@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, Fragment } from "react";
 import { json } from "@remix-run/node";
 import {
   useActionData,
@@ -21,7 +21,7 @@ import {
   Spinner,
 } from "@shopify/polaris";
 
-import { authenticate } from "../shopify.server";
+import { authenticate, sessionStorage } from "../shopify.server";
 import { useCustomFetch } from "~/libs/dataFetch";
 import { getHubPriceApi } from "~/api";
 import { CashDollarMajor } from "@shopify/polaris-icons";
@@ -32,9 +32,9 @@ export const loader = async ({ request }) => {
   // console.log("-----------------------");
   // console.log(admin);
   // console.log("-----------------------");
-  const orders = await getOrders(session.shop, admin.graphql);
+  // const orders = await getOrders(session.shop, admin.graphql);
   const shop = session.shop.replace(".myshopify.com", "");
-  return json({ shop, orders });
+  return json({ shop });
 };
 
 export async function action({ request }) {
@@ -84,8 +84,7 @@ export async function action({ request }) {
 
 export default function Index() {
   // const nav = useNavigation();
-  const { shop, orders } = useLoaderData();
-  console.log(orders)
+  const { shop } = useLoaderData();
   // const actionData = useActionData();
   // const submit = useSubmit();
 
@@ -205,7 +204,7 @@ export default function Index() {
                       <Divider />
                       {data?.prices.map((item) =>
                       (
-                        <>
+                        <Fragment key={item.id}>
                           <HorizontalStack align="space-between">
                             <div className="flex justify-between w-full mb-2">
                               <p className="font-semibold capitalize">{item.type.replace("_", " ")}</p>
@@ -214,7 +213,7 @@ export default function Index() {
                             <p>{item.description}</p>
                           </HorizontalStack>
                           <Divider />
-                        </>
+                        </Fragment>
                       ))}
 
                     </VerticalStack>

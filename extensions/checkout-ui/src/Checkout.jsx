@@ -16,11 +16,11 @@ export default reactExtension("purchase.checkout.contact.render-after", () => <A
 
 function App() {
   // Set up the checkbox state
-  const [checked, setChecked] = useState(false);
+  // const [checked, setChecked] = useState(false);
 
   // Define the metafield namespace and key
-  const metafieldNamespace = "metafields.custom.hubon";
-  const metafieldKey = "custom.hubon";
+  const metafieldNamespace = "custom";
+  const metafieldKey = "hubon";
 
   // Get a reference to the metafield
   const deliveryInstructions = useMetafield({
@@ -31,9 +31,9 @@ function App() {
   const applyMetafieldsChange = useApplyMetafieldsChange();
 
   // Set a function to handle the Checkbox component's onChange event
-  const handleChange = () => {
-    setChecked(!checked);
-  };
+  // const handleChange = () => {
+  //   setChecked(!checked);
+  // };
 
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -64,26 +64,48 @@ function App() {
   return (
     <BlockStack>
       <Text size="large" emphasis="bold" >
-        App testing delivery
+        HubOn Delivery
       </Text>
       {isLoading ?
         <SkeletonText />
         :
         <Select
           label="Select hub"
-          value={2}
+          value={deliveryInstructions?.value}
           options={data?.hubs?.map((hub) => ({ ...hub, label: hub.name }))}
           autocomplete
+          onChange={(value) => {
+            // Apply the change to the metafield
+            applyMetafieldsChange({
+              type: "updateMetafield",
+              namespace: metafieldNamespace,
+              key: metafieldKey,
+              valueType: "string",
+              value,
+            });
+          }}
         />
       }
-      {/* {checked && ( */}
-      {/* <Autocomplete
-        options={options}
-        selected={selectedOptions}
-        onSelect={updateSelection}
-        textField={textField}
-      /> */}
-      {/* )}  */}
+      {/* <Checkbox checked={checked} onChange={handleChange}>
+        Provide delivery instructions
+      </Checkbox>
+      {checked && (
+        <TextField
+          label="Delivery instructions"
+          multiline={3}
+          onChange={(value) => {
+            // Apply the change to the metafield
+            applyMetafieldsChange({
+              type: "updateMetafield",
+              namespace: metafieldNamespace,
+              key: metafieldKey,
+              valueType: "string",
+              value,
+            });
+          }}
+          value={deliveryInstructions?.value}
+        />
+      )} */}
     </BlockStack>
   );
 }
