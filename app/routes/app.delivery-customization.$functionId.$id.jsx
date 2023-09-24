@@ -18,7 +18,7 @@ import { json } from "@remix-run/node";
 import { authenticate } from "../shopify.server";
 
 export const loader = async ({ params, request }) => {
-	const { functionId, id } = params;
+	const { id } = params;
 	const { admin } = await authenticate.admin(request);
 
 	if (id != "new") {

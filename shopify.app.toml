@@ -1,20 +1,20 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-name = "HubOn App"
+name = "Testing Hub App"
 client_id = "9d53df60ffa22ca785f6b5b2d0d6d60d"
-application_url = "https://briefs-charm-aviation-turned.trycloudflare.com"
+application_url = "https://learn-ppc-guinea-theory.trycloudflare.com"
 embedded = true
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_products,write_products,read_themes,write_themes,read_customers,read_orders,write_delivery_customizations,read_delivery_customizations"
+scopes = "read_products,write_products,read_themes,write_themes,read_customers,read_orders,write_delivery_customizations,read_delivery_customizations,write_locations,read_shipping,write_shipping"
 use_legacy_install_flow = true
 
 [auth]
 redirect_urls = [
-  "https://briefs-charm-aviation-turned.trycloudflare.com/auth/callback",
-  "https://briefs-charm-aviation-turned.trycloudflare.com/auth/shopify/callback",
-  "https://briefs-charm-aviation-turned.trycloudflare.com/api/auth/callback"
+  "https://learn-ppc-guinea-theory.trycloudflare.com/auth/callback",
+  "https://learn-ppc-guinea-theory.trycloudflare.com/auth/shopify/callback",
+  "https://learn-ppc-guinea-theory.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

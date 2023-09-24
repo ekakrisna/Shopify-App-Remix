@@ -17432,7 +17432,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
   });
 
   // extensions/checkout-ui/src/Checkout.jsx
-  var import_react11 = __toESM(require_react());
+  var import_react14 = __toESM(require_react());
 
   // node_modules/@shopify/ui-extensions/node_modules/@remote-ui/core/build/esm/component.mjs
   function createRemoteComponent(componentType) {
@@ -18380,8 +18380,17 @@ ${errorInfo.componentStack}`);
   // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/BlockStack/BlockStack.mjs
   var BlockStack2 = createRemoteReactComponent(BlockStack);
 
+  // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/Select/Select.mjs
+  var Select2 = createRemoteReactComponent(Select);
+
+  // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/SkeletonText/SkeletonText.mjs
+  var SkeletonText2 = createRemoteReactComponent(SkeletonText);
+
+  // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/Text/Text.mjs
+  var Text2 = createRemoteReactComponent(Text);
+
   // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/hooks/api.mjs
-  var import_react8 = __toESM(require_react(), 1);
+  var import_react11 = __toESM(require_react(), 1);
 
   // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/errors.mjs
   var CheckoutUIExtensionError = class extends Error {
@@ -18399,7 +18408,7 @@ ${errorInfo.componentStack}`);
 
   // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/hooks/api.mjs
   function useApi(_target) {
-    const api = (0, import_react8.useContext)(ExtensionApiContext);
+    const api = (0, import_react11.useContext)(ExtensionApiContext);
     if (api == null) {
       throw new CheckoutUIExtensionError("You can only call this hook when running as a UI extension.");
     }
@@ -18407,10 +18416,10 @@ ${errorInfo.componentStack}`);
   }
 
   // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/hooks/subscription.mjs
-  var import_react9 = __toESM(require_react(), 1);
+  var import_react12 = __toESM(require_react(), 1);
   function useSubscription(subscription) {
-    const [, setValue] = (0, import_react9.useState)(subscription.current);
-    (0, import_react9.useEffect)(() => {
+    const [, setValue] = (0, import_react12.useState)(subscription.current);
+    (0, import_react12.useEffect)(() => {
       let didUnsubscribe = false;
       const checkForUpdates = (newValue) => {
         if (didUnsubscribe) {
@@ -18429,10 +18438,10 @@ ${errorInfo.componentStack}`);
   }
 
   // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/hooks/metafields.mjs
-  var import_react10 = __toESM(require_react(), 1);
+  var import_react13 = __toESM(require_react(), 1);
   function useMetafields(filters) {
     const metaFields = useSubscription(useApi().metafields);
-    return (0, import_react10.useMemo)(() => {
+    return (0, import_react13.useMemo)(() => {
       if (filters) {
         const {
           namespace,
@@ -18471,6 +18480,15 @@ ${errorInfo.componentStack}`);
     return metafields.length ? metafields[0] : void 0;
   }
 
+  // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/hooks/attributes.mjs
+  function useApplyAttributeChange() {
+    const api = useApi();
+    if ("applyAttributeChange" in api) {
+      return api.applyAttributeChange;
+    }
+    throw new ExtensionHasNoMethodError("applyAttributeChange", api.extension.target);
+  }
+
   // extensions/checkout-ui/src/Checkout.jsx
   var import_jsx_runtime4 = __toESM(require_jsx_runtime2());
   var Checkout_default = reactExtension("purchase.checkout.contact.render-after", () => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(App, {}));
@@ -18483,31 +18501,48 @@ ${errorInfo.componentStack}`);
       key: metafieldKey
     });
     const applyMetafieldsChange = useApplyMetafieldsChange();
-    const [data, setData] = (0, import_react11.useState)([]);
-    const [isLoading, setIsLoading] = (0, import_react11.useState)(true);
-    (0, import_react11.useEffect)(() => {
+    const [data, setData] = (0, import_react14.useState)([]);
+    const [isLoading, setIsLoading] = (0, import_react14.useState)(true);
+    (0, import_react14.useEffect)(() => {
       const apiUrl = "https://hub-on-api--hub-on-gardeneur.sandboxes.run/api/v1/hubs";
       fetch(apiUrl).then((response) => {
         if (!response.ok)
           throw new Error("Network response was not ok");
         return response.json();
       }).then((data2) => {
-        console.log(data2);
-        setData(data2);
+        const newArray = [];
+        for (let i = 0; i < 10; i++) {
+          newArray.push(data2.hubs[i % data2.hubs.length]);
+        }
+        setData(__spreadProps(__spreadValues({}, data2), { hubs: newArray }));
         setIsLoading(false);
       }).catch((error) => {
         console.error("Error:", error);
         setIsLoading(false);
       });
     }, []);
+    const applyAttributeChange = useApplyAttributeChange();
+    function onCheckboxChange(isChecked) {
+      return __async(this, null, function* () {
+        const result = yield applyAttributeChange({
+          key: "requestedFreeGift",
+          type: "updateAttribute",
+          value: isChecked ? "yes" : "no"
+        });
+        console.log(
+          "applyAttributeChange result",
+          result
+        );
+      });
+    }
     return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(BlockStack2, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Text, { size: "large", emphasis: "bold", children: "HubOn Delivery" }),
-      isLoading ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(SkeletonText, {}) : /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-        Select,
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Text2, { size: "large", emphasis: "bold", children: "HubOn Delivery" }),
+      isLoading ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(SkeletonText2, {}) : /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        Select2,
         {
           label: "Select hub",
           value: deliveryInstructions == null ? void 0 : deliveryInstructions.value,
-          options: (_a = data == null ? void 0 : data.hubs) == null ? void 0 : _a.map((hub) => __spreadProps(__spreadValues({}, hub), { label: hub.name })),
+          options: (_a = data == null ? void 0 : data.hubs) == null ? void 0 : _a.map((hub) => __spreadProps(__spreadValues({}, hub), { label: `${hub.name} $7`, value: hub.id })),
           autocomplete: true,
           onChange: (value) => {
             applyMetafieldsChange({
