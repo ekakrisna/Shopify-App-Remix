@@ -1198,7 +1198,7 @@
             var dispatcher = resolveDispatcher();
             return dispatcher.useCallback(callback, deps);
           }
-          function useMemo4(create, deps) {
+          function useMemo3(create, deps) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useMemo(create, deps);
           }
@@ -1761,7 +1761,7 @@
           exports.useEffect = useEffect3;
           exports.useImperativeHandle = useImperativeHandle;
           exports.useLayoutEffect = useLayoutEffect;
-          exports.useMemo = useMemo4;
+          exports.useMemo = useMemo3;
           exports.useReducer = useReducer;
           exports.useRef = useRef2;
           exports.useState = useState3;
@@ -2578,11 +2578,11 @@
         module.exports = function $$$reconciler($$$hostConfig) {
           var exports2 = {};
           "use strict";
-          var React2 = require_react();
+          var React = require_react();
           var _assign = require_object_assign();
           var Scheduler = require_scheduler();
           var tracing = require_tracing();
-          var ReactSharedInternals = React2.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+          var ReactSharedInternals = React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
           function warn(format) {
             {
               for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -5292,7 +5292,7 @@
           }
           var fakeInternalInstance = {};
           var isArray = Array.isArray;
-          var emptyRefsObject = new React2.Component().refs;
+          var emptyRefsObject = new React.Component().refs;
           var didWarnAboutStateAssignmentForComponent;
           var didWarnAboutUninitializedState;
           var didWarnAboutGetSnapshotBeforeUpdateWithoutDidUpdate;
@@ -15718,7 +15718,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
       if (true) {
         (function() {
           "use strict";
-          var React2 = require_react();
+          var React = require_react();
           var _assign = require_object_assign();
           var REACT_ELEMENT_TYPE = 60103;
           var REACT_PORTAL_TYPE = 60106;
@@ -15775,7 +15775,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
             }
             return null;
           }
-          var ReactSharedInternals = React2.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+          var ReactSharedInternals = React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
           function error(format) {
             {
               for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
@@ -16578,7 +16578,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
       if (true) {
         (function() {
           "use strict";
-          var React2 = require_react();
+          var React = require_react();
           var _assign = require_object_assign();
           var REACT_ELEMENT_TYPE = 60103;
           var REACT_PORTAL_TYPE = 60106;
@@ -16635,7 +16635,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
             }
             return null;
           }
-          var ReactSharedInternals = React2.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+          var ReactSharedInternals = React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
           function error(format) {
             {
               for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
@@ -17432,7 +17432,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
   });
 
   // extensions/checkout-ui/src/Checkout.jsx
-  var import_react14 = __toESM(require_react());
+  var import_react19 = __toESM(require_react());
 
   // node_modules/@shopify/ui-extensions/node_modules/@remote-ui/core/build/esm/component.mjs
   function createRemoteComponent(componentType) {
@@ -18063,17 +18063,32 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
   // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/extension.mjs
   var extension = createExtensionRegistrationFunction();
 
+  // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/Banner/Banner.mjs
+  var Banner = createRemoteComponent("Banner");
+
   // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/BlockStack/BlockStack.mjs
   var BlockStack = createRemoteComponent("BlockStack");
 
-  // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/Select/Select.mjs
-  var Select = createRemoteComponent("Select");
+  // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/Choice/Choice.mjs
+  var Choice = createRemoteComponent("Choice");
 
-  // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/SkeletonText/SkeletonText.mjs
-  var SkeletonText = createRemoteComponent("SkeletonText");
+  // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/ChoiceList/ChoiceList.mjs
+  var ChoiceList = createRemoteComponent("ChoiceList");
+
+  // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/ScrollView/ScrollView.mjs
+  var ScrollView = createRemoteComponent("ScrollView");
+
+  // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/Spinner/Spinner.mjs
+  var Spinner = createRemoteComponent("Spinner");
 
   // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/Text/Text.mjs
   var Text = createRemoteComponent("Text");
+
+  // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/TextBlock/TextBlock.mjs
+  var TextBlock = createRemoteComponent("TextBlock");
+
+  // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/TextField/TextField.mjs
+  var TextField = createRemoteComponent("TextField");
 
   // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/render.mjs
   var import_react5 = __toESM(require_react(), 1);
@@ -18377,20 +18392,37 @@ ${errorInfo.componentStack}`);
     }
   };
 
+  // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/Banner/Banner.mjs
+  var Banner2 = createRemoteReactComponent(Banner);
+
   // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/BlockStack/BlockStack.mjs
   var BlockStack2 = createRemoteReactComponent(BlockStack);
 
-  // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/Select/Select.mjs
-  var Select2 = createRemoteReactComponent(Select);
+  // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/Choice/Choice.mjs
+  var Choice2 = createRemoteReactComponent(Choice);
 
-  // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/SkeletonText/SkeletonText.mjs
-  var SkeletonText2 = createRemoteReactComponent(SkeletonText);
+  // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/ChoiceList/ChoiceList.mjs
+  var ChoiceList2 = createRemoteReactComponent(ChoiceList);
+
+  // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/ScrollView/ScrollView.mjs
+  var ScrollView2 = createRemoteReactComponent(ScrollView);
+
+  // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/Spinner/Spinner.mjs
+  var Spinner2 = createRemoteReactComponent(Spinner);
 
   // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/Text/Text.mjs
   var Text2 = createRemoteReactComponent(Text);
 
+  // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/TextBlock/TextBlock.mjs
+  var TextBlock2 = createRemoteReactComponent(TextBlock);
+
+  // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/TextField/TextField.mjs
+  var TextField2 = createRemoteReactComponent(TextField, {
+    fragmentProps: ["accessory"]
+  });
+
   // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/hooks/api.mjs
-  var import_react11 = __toESM(require_react(), 1);
+  var import_react16 = __toESM(require_react(), 1);
 
   // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/errors.mjs
   var CheckoutUIExtensionError = class extends Error {
@@ -18408,7 +18440,7 @@ ${errorInfo.componentStack}`);
 
   // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/hooks/api.mjs
   function useApi(_target) {
-    const api = (0, import_react11.useContext)(ExtensionApiContext);
+    const api = (0, import_react16.useContext)(ExtensionApiContext);
     if (api == null) {
       throw new CheckoutUIExtensionError("You can only call this hook when running as a UI extension.");
     }
@@ -18416,10 +18448,10 @@ ${errorInfo.componentStack}`);
   }
 
   // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/hooks/subscription.mjs
-  var import_react12 = __toESM(require_react(), 1);
+  var import_react17 = __toESM(require_react(), 1);
   function useSubscription(subscription) {
-    const [, setValue] = (0, import_react12.useState)(subscription.current);
-    (0, import_react12.useEffect)(() => {
+    const [, setValue] = (0, import_react17.useState)(subscription.current);
+    (0, import_react17.useEffect)(() => {
       let didUnsubscribe = false;
       const checkForUpdates = (newValue) => {
         if (didUnsubscribe) {
@@ -18438,10 +18470,10 @@ ${errorInfo.componentStack}`);
   }
 
   // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/hooks/metafields.mjs
-  var import_react13 = __toESM(require_react(), 1);
+  var import_react18 = __toESM(require_react(), 1);
   function useMetafields(filters) {
     const metaFields = useSubscription(useApi().metafields);
-    return (0, import_react13.useMemo)(() => {
+    return (0, import_react18.useMemo)(() => {
       if (filters) {
         const {
           namespace,
@@ -18480,20 +18512,44 @@ ${errorInfo.componentStack}`);
     return metafields.length ? metafields[0] : void 0;
   }
 
-  // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/hooks/attributes.mjs
-  function useApplyAttributeChange() {
+  // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/hooks/shipping-address.mjs
+  function useApplyShippingAddressChange() {
     const api = useApi();
-    if ("applyAttributeChange" in api) {
-      return api.applyAttributeChange;
+    if ("applyShippingAddressChange" in api) {
+      return api.applyShippingAddressChange;
     }
-    throw new ExtensionHasNoMethodError("applyAttributeChange", api.extension.target);
+    throw new ExtensionHasNoMethodError("applyCartLinesChange", api.extension.target);
   }
 
   // extensions/checkout-ui/src/Checkout.jsx
   var import_jsx_runtime4 = __toESM(require_jsx_runtime2());
   var Checkout_default = reactExtension("purchase.checkout.contact.render-after", () => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(App, {}));
   function App() {
-    var _a;
+    var _a, _b;
+    const [data, setData] = (0, import_react19.useState)([]);
+    const [isLoading, setIsLoading] = (0, import_react19.useState)(true);
+    const [search, setSearch] = (0, import_react19.useState)("");
+    const onChangeSearch = (0, import_react19.useCallback)((value) => {
+      setSearch(value);
+    }, []);
+    (0, import_react19.useEffect)(() => {
+      setIsLoading(true);
+      let apiUrl = "https://hub-on-api--hub-on-gardeneur.sandboxes.run/api/v1/hubs";
+      if (search)
+        apiUrl += `?search=${search}`;
+      fetch(apiUrl).then((response) => {
+        if (!response.ok)
+          throw new Error("Network response was not ok");
+        return response.json();
+      }).then((data2) => {
+        const hubs = data2.hubs.map((hub) => JSON.stringify(hub));
+        setData(__spreadProps(__spreadValues({}, data2), { hubs }));
+        setIsLoading(false);
+      }).catch((error) => {
+        console.error("Error:", error);
+        setIsLoading(false);
+      });
+    }, [search]);
     const metafieldNamespace = "custom";
     const metafieldKey = "hubon";
     const deliveryInstructions = useMetafield({
@@ -18501,58 +18557,56 @@ ${errorInfo.componentStack}`);
       key: metafieldKey
     });
     const applyMetafieldsChange = useApplyMetafieldsChange();
-    const [data, setData] = (0, import_react14.useState)([]);
-    const [isLoading, setIsLoading] = (0, import_react14.useState)(true);
-    (0, import_react14.useEffect)(() => {
-      const apiUrl = "https://hub-on-api--hub-on-gardeneur.sandboxes.run/api/v1/hubs";
-      fetch(apiUrl).then((response) => {
-        if (!response.ok)
-          throw new Error("Network response was not ok");
-        return response.json();
-      }).then((data2) => {
-        const newArray = [];
-        for (let i = 0; i < 10; i++) {
-          newArray.push(data2.hubs[i % data2.hubs.length]);
-        }
-        setData(__spreadProps(__spreadValues({}, data2), { hubs: newArray }));
-        setIsLoading(false);
-      }).catch((error) => {
-        console.error("Error:", error);
-        setIsLoading(false);
-      });
-    }, []);
-    const applyAttributeChange = useApplyAttributeChange();
-    function onCheckboxChange(isChecked) {
-      return __async(this, null, function* () {
-        const result = yield applyAttributeChange({
-          key: "requestedFreeGift",
-          type: "updateAttribute",
-          value: isChecked ? "yes" : "no"
+    const applyShippingAddressChange = useApplyShippingAddressChange();
+    const handleChangeList = (value) => __async(this, null, function* () {
+      const jsonParse = JSON.parse(value);
+      const newShippingAddress = {
+        name: jsonParse.name,
+        firstName: "John",
+        lastName: "Doe",
+        address1: "123 New Street",
+        address2: void 0,
+        city: "Cityville",
+        province: "PV",
+        postalCode: "12345",
+        country: "CA",
+        company: void 0,
+        countryCode: "ID",
+        phone: "",
+        provinceCode: "KR",
+        zip: jsonParse.zipcode
+      };
+      const updateShippingAddress = yield applyShippingAddressChange({ type: "updateShippingAddress", address: newShippingAddress });
+      if (updateShippingAddress.type === "success") {
+        applyMetafieldsChange({
+          type: "updateMetafield",
+          namespace: metafieldNamespace,
+          key: metafieldKey,
+          valueType: "json_string",
+          value
         });
-        console.log(
-          "applyAttributeChange result",
-          result
-        );
-      });
-    }
+      }
+    });
     return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(BlockStack2, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Text2, { size: "large", emphasis: "bold", children: "HubOn Delivery" }),
-      isLoading ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(SkeletonText2, {}) : /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-        Select2,
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Text2, { size: "large", emphasis: "bold", children: "HubOn delivery" }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(TextField2, { label: "Search hub by name, zipcode, city, or address", value: search, onChange: onChangeSearch }),
+      isLoading ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Spinner2, {}) : ((_a = data == null ? void 0 : data.hubs) == null ? void 0 : _a.length) > 0 ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(ScrollView2, { maxBlockSize: 250, children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        ChoiceList2,
         {
-          label: "Select hub",
-          value: deliveryInstructions == null ? void 0 : deliveryInstructions.value,
-          options: (_a = data == null ? void 0 : data.hubs) == null ? void 0 : _a.map((hub) => __spreadProps(__spreadValues({}, hub), { label: `${hub.name} $7`, value: hub.id })),
-          autocomplete: true,
-          onChange: (value) => {
-            applyMetafieldsChange({
-              type: "updateMetafield",
-              namespace: metafieldNamespace,
-              key: metafieldKey,
-              valueType: "string",
-              value
-            });
-          }
+          name: "hubon",
+          value: (deliveryInstructions == null ? void 0 : deliveryInstructions.value) || "",
+          onChange: handleChangeList,
+          children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(BlockStack2, { children: (_b = data == null ? void 0 : data.hubs) == null ? void 0 : _b.map((hub) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(Choice2, { id: hub, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(TextBlock2, { size: "base", children: JSON.parse(hub).name }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Text2, { size: "extraSmall", children: JSON.parse(hub).address }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(TextBlock2, { size: "base", children: JSON.parse(hub).contact })
+          ] }, JSON.parse(hub).id)) })
+        }
+      ) }) : /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        Banner2,
+        {
+          status: "info",
+          title: "No hub is found"
         }
       )
     ] });

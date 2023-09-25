@@ -1,5 +1,5 @@
 import { useEffect, Fragment, useState, useCallback } from "react";
-import { json, redirect } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import {
   useActionData,
   useLoaderData,
@@ -15,9 +15,7 @@ import {
   Card,
   Button,
   HorizontalStack,
-  Box,
   Divider,
-  List,
   Link,
   Spinner,
   Grid,
@@ -26,24 +24,19 @@ import {
   EmptyState,
   Pagination,
   Modal,
+  Banner,
 } from "@shopify/polaris";
 
-import shopify, { authenticate, sessionStorage } from "~/shopify.server";
+import { authenticate } from "~/shopify.server";
 import { useCustomFetch } from "~/libs/dataFetch";
-import { addLocationApi, getHubApi, getHubPriceApi } from "~/api";
-import { CashDollarMajor, DetailedPopUpMajor, FilterMajor } from "@shopify/polaris-icons";
-import { getOrders } from "~/models/Order.server";
+import { getHubApi, getHubPriceApi } from "~/api";
+import { DetailedPopUpMajor, FilterMajor } from "@shopify/polaris-icons";
 
-export const loader = async ({ request, context }) => {
-  // console.log(request)
-  const { session, admin } = await authenticate.admin(request);
+export const loader = async ({ request }) => {
+  const { session, } = await authenticate.admin(request);
   const shop = session.shop;
   const accessToken = session.accessToken;
   const searchParams = new URLSearchParams(request.url.split('?')[1] || '');
-  console.log("---------=====================---------")
-  console.log(context)
-
-  console.log("---------=====================---------")
   const page_size = Number(searchParams.get('page_size')) || 10;
   const page = Number(searchParams.get('page')) || 1;
   const search = searchParams.get('search') || "";
@@ -55,185 +48,90 @@ export const loader = async ({ request, context }) => {
 export async function action({ request }) {
   const { admin, session } = await authenticate.admin(request);
 
-  // const response = await admin.graphql(
-  //   `mutation {
-  //     locationAdd(input: {name: "New York Warehouses 1", address: {address1: "101 Liberty Street", city: "New York", provinceCode: "NY", countryCode: US, zip: "10006"}, fulfillsOnlineOrders: true}) {
-  //       location {
-  //         id
-  //         name
-  //         address {
-  //           address1
-  //           provinceCode
-  //           countryCode
-  //           zip
-  //         }
-  //         fulfillsOnlineOrders
-  //       }
-  //     }
-  //   }`);
+  const getMetaFields = await admin.graphql(
+    `query {
+      metafieldDefinitions(first: 250, ownerType: ORDER) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }`
+  );
+  console.log("---------========SUCCESS========---------")
+  // Response get metafields
+  const responseMetaFields = await getMetaFields.json();
+  // Extract the relevant data
+  const metafieldDefinitions = responseMetaFields.data.metafieldDefinitions.edges.map((edge) => edge.node);
+  // const meta field name
+  const metaFieldName = "HubOn MetaField"
+  // Check if any node has the key "hubon"
+  const hasHubonKey = metafieldDefinitions.some((node) => node.name === metaFieldName);
+  if (hasHubonKey) {
+    console.log('At least one node has the key "hubon".');
+  } else {
+    const addMetaFieldOrder = await admin.graphql(
+      `mutation CreateMetafieldDefinition($definition: MetafieldDefinitionInput!) {
+        metafieldDefinitionCreate(definition: $definition) {
+          createdDefinition {
+            id
+            name
+          }
+          userErrors {
+            field
+            message
+            code
+          }
+        }
+      }`, {
+      variables: {
+        "definition": {
+          "name": "HubOn MetaField",
+          "namespace": "custom",
+          "key": "hubon",
+          "description": "A hub of used to make the order.",
+          "type": "json",
+          "ownerType": "ORDER"
+        }
+      }
+    });
 
-  // const response = await admin.graphql(
-  //   `mutation createDeliveryProfile($profile: DeliveryProfileInput!) {
-  //       deliveryProfileCreate(profile: $profile) {
-  //         profile {
-  //           id
-  //           name
-  //           profileLocationGroups {
-  //             locationGroup {
-  //               id
-  //               locations(first: 5) {
-  //                 nodes {
-  //                   name
-  //                   address {
-  //                     country
-  //                   }
-  //                 }
-  //               }
-  //             }
-  //             locationGroupZones(first: 2) {
-  //               edges {
-  //                 node {
-  //                   zone {
-  //                     id
-  //                     name
-  //                     countries {
-  //                       code {
-  //                         countryCode
-  //                       }
-  //                       provinces {
-  //                         code
-  //                       }
-  //                     }
-  //                   }
-  //                 }
-  //               }
-  //             }
-  //           }
-  //         }
-  //         userErrors {
-  //           field
-  //           message
-  //         }
-  //       }
-  //     }`, {
-  //   "variables": {
-  //     "profile": {
-  //       "name": "HubOn Delivery",
-  //       "locationGroupsToCreate": [
-  //         {
-  //           "locationsToAdd": [
-  //             "gid://shopify/Location/91666219288",
-  //             "gid://shopify/Location/91882258712"
-  //           ],
-  //           "zonesToCreate": [
-  //             {
-  //               "name": "Canada Zone",
-  //               "countries": [
-  //                 {
-  //                   "code": "CA",
-  //                   "provinces": [
-  //                     {
-  //                       "code": "ON"
-  //                     }
-  //                   ]
-  //                 }
-  //               ],
-  //               "methodDefinitionsToCreate": [
-  //                 {
-  //                   "name": "Standard",
-  //                   "rateDefinition": {
-  //                     "price": {
-  //                       "amount": 7.0,
-  //                       "currencyCode": "USD"
-  //                     }
-  //                   },
-  //                   "weightConditionsToCreate": [
-  //                     {
-  //                       "operator": "GREATER_THAN_OR_EQUAL_TO",
-  //                       "criteria": {
-  //                         "value": 0,
-  //                         "unit": "KILOGRAMS"
-  //                       }
-  //                     },
-  //                     {
-  //                       "operator": "LESS_THAN_OR_EQUAL_TO",
-  //                       "criteria": {
-  //                         "value": 15.0,
-  //                         "unit": "KILOGRAMS"
-  //                       }
-  //                     }
-  //                   ]
-  //                 }
-  //               ]
-  //             }
-  //           ]
-  //         },
-  //         {
-  //           "locationsToAdd": [
-  //             "gid://shopify/Location/91883536664"
-  //           ],
-  //           "zonesToCreate": [
-  //             {
-  //               "name": "USA Zone",
-  //               "countries": {
-  //                 "code": "US",
-  //                 "provinces": [
-  //                   {
-  //                     "code": "CO"
-  //                   }
-  //                 ]
-  //               },
-  //               "methodDefinitionsToCreate": [
-  //                 {
-  //                   "name": "Standard",
-  //                   "rateDefinition": {
-  //                     "price": {
-  //                       "amount": 7,
-  //                       "currencyCode": "USD"
-  //                     }
-  //                   }
-  //                 }
-  //               ]
-  //             },
-  //             {
-  //               "name": "Mexico Zone",
-  //               "countries": {
-  //                 "code": "MX",
-  //                 "provinces": [
-  //                   {
-  //                     "code": "MOR"
-  //                   }
-  //                 ]
-  //               },
-  //               "methodDefinitionsToCreate": [
-  //                 {
-  //                   "name": "Standard",
-  //                   "rateDefinition": {
-  //                     "price": {
-  //                       "amount": 7,
-  //                       "currencyCode": "USD"
-  //                     }
-  //                   }
-  //                 }
-  //               ]
-  //             }
-  //           ]
-  //         }
-  //       ]
-  //     }
-  //   }
-  // });
+    const responseMetaField = await addMetaFieldOrder.json();
+    console.log(responseMetaField);
+  }
+  console.log("---------========SUCCESS========---------")
 
-  const carrier_service = new admin.rest.resources.CarrierService({ session: session });
-  carrier_service.id = 83630686530;
-  carrier_service.name = "HubOn Delivery";
-  carrier_service.callback_url = "https://testing-app.balibecikwedding.com/api/callback";
-  carrier_service.service_discovery = true;
-  // carrier_service.active = true;
+  // get carrier services
+  const responseGetCarrierServices = await admin.rest.resources.CarrierService.all({ session: session })
+  const jsonDataCarrireServices = responseGetCarrierServices.data;
+  console.log("=============jsonDataCarrireServices=================");
+  console.log(jsonDataCarrireServices);
+  console.log("=============jsonDataCarrireServices=================");
+  if (jsonDataCarrireServices) {
+    const hubonDeliveryService = "HubOn Delivery";
+    const hubonCallbackUrl = 'https://testing-app.balibecikwedding.com/api/callback';
+    const hasHubonDelivery = responseGetCarrierServices.data?.some((item) => item.name === hubonDeliveryService);
+    if (hasHubonDelivery) {
+      // const response = await admin.rest.resources.CarrierService.delete({ session: session, id: 83630686530 })
+      console.log('HubOn Delivery Available');
+      // console.log(response);
+      // console.log('HubOn Delivery Available');
+    } else {
+      const carrierService = new admin.rest.resources.CarrierService({ session: session });
+      carrierService.name = hubonDeliveryService;
+      carrierService.callback_url = hubonCallbackUrl;
+      carrierService.service_discovery = true;
+      const responseCarrierService = await carrierService.save({
+        update: true
+      })
+      // const dataCarrierService = await responseCarrierService;
+      console.log("=============dataCarrierService=================");
+      console.log(responseCarrierService);
+      console.log("=============dataCarrierService=================");
+    }
 
-  // const response = await admin.rest.resources.CarrierService.delete({ session: session, id: 83630686530 })
-  const response = await admin.rest.resources.CarrierService.all({ session: session })
-
+  }
   // const response = await carrier_service.save({
   //   update: true
   // }).then((res) => {
@@ -258,12 +156,15 @@ export async function action({ request }) {
   //   return errorResponse;
   // });
 
-  console.log("---------=====================---------")
-  console.log(response);
-  console.log("---------=====================---------")
-  return json({
-    location: response,
-  });
+  // console.log("---------=====================---------")
+  // console.log(response);
+  // console.log("---------=====================---------")
+  // return redirect("/app");
+  const response = {
+    data: true,
+    statusCode: 200
+  }
+  return json({ response });
 }
 
 function truncate(str, { length = 25 } = {}) {
@@ -274,14 +175,14 @@ function truncate(str, { length = 25 } = {}) {
 
 const EmptyHubState = ({ onAction }) => (
   <EmptyState
-    heading="Create unique QR codes for your product"
-    action={{
-      content: "Create QR code",
-      onAction,
-    }}
+    heading="No hub is found"
+    // action={{
+    //   content: "Create QR code",
+    //   onAction,
+    // }}
     image="https://cdn.shopify.com/s/files/1/0262/4071/2726/files/emptystate-files.png"
   >
-    <p>Allow customers to scan codes and buy products using their phones.</p>
+    {/* <p>No hub is found</p> */}
   </EmptyState>
 );
 
@@ -390,16 +291,31 @@ function DisplayObject(props) {
   return renderObject(data);
 }
 export default function Index() {
-  const nav = useNavigation();
-  const { shop, query, accessToken, session, response } = useLoaderData();
-  // console.log(accessToken)
-  const actionData = useActionData();
-  const submit = useSubmit();
-  const navigate = useNavigate();
-  console.log(actionData?.location)
-  const isLoadingLocation =
-    ["loading", "submitting"].includes(nav.state) && nav.formMethod === "POST";
+  const { query } = useLoaderData();
 
+  const submit = useSubmit();
+
+  const response = useActionData()?.response || { data: false };
+
+  const [showBanner, setShowBanner] = useState(response?.data);
+  const toggleBanner = useCallback(() => setShowBanner((active) => !active), []);
+
+  const showBannerElement = showBanner ? <Layout.Section>
+    <Banner title="HubOn Delivery" status="success" onDismiss={toggleBanner}>
+      <p>HubOn delivery configured successfully!</p>
+    </Banner>
+  </Layout.Section> : null;
+
+  useEffect(() => {
+    if (response.data) setShowBanner(response.data)
+  }, [response])
+
+  const nav = useNavigation();
+  const isLoadingSync =
+    ["loading", "submitting"].includes(nav.state) && nav.formMethod === "POST";
+  const generateLocation = () => submit({}, { replace: true, method: "POST" });
+
+  const navigate = useNavigate();
 
   const [active, setActive] = useState(false);
   const [hubDetail, setHubDetail] = useState(null);
@@ -408,10 +324,8 @@ export default function Index() {
     setActive(!active);
   }, [active]);
 
-
   const useFetchPrice = useCustomFetch("myQueryKey", getHubPriceApi);
   const { isLoading, data } = useFetchPrice();
-
 
   const [filter, setFilter] = useState(query);
   const [hubs, setHubs] = useState([]);
@@ -433,55 +347,18 @@ export default function Index() {
   const handleFilter = useCallback((newValue) => setFilter((prev) => ({ ...prev, search: newValue })), []);
   const handleClearSearch = () => setFilter((prev) => ({ ...prev, search: "" }));
 
-  const addLocation = async ({ shop, hubs, accessToken }) => {
-    const payload = {
-      carrier_service: {
-        "name": "Shipping Rate Provider",
-        "callback_url": "http://shipping.example.com",
-        "service_discovery": true
-      }
-    }
-    const data = await addLocationApi({ shop, carrier_service: payload, accessToken })
-    console.log(data)
-    // const carrier_service = new shopify.rest.CarrierService({ session: session });
-    // carrier_service.name = "Shipping Rate Provider";
-    // carrier_service.callback_url = "http://shipping.example.com";
-    // carrier_service.service_discovery = true;
-    // await carrier_service.save({
-    //   update: true,
-    // });
-    // const locations = hubs?.map((hub, index) => ({
-    //   // ...hub,
-    //   name: hub.name,
-    //   address1: hub.address,
-    //   city: `City ${index + 1}`,
-    //   province: `State ${index + 1}`,
-    //   country: `Country ${index + 1}`,
-    //   zip: hub.zipcode,
-    //   active: true
-    // }))
-    // // locations.forEach(addLocationApi({ shop, location, accessToken }));
-    // const data = await addLocationApi({ shop, location: locations[0], accessToken });
-    // console.log(data)
-    // // console.log(`Created location: ${data.name} (ID: ${data.id})`);
-  }
-
-  // useEffect(() => {
-  //   if (productId) {
-  //     shopify.toast.show("Product created");
-  //   }
-  // }, [productId]);
-
-  const generateLocation = () => submit({}, { replace: true, method: "PUT" });
-  // () => addLocation({ shop, hubs, accessToken })
   return (
-    <Page>
-      <ui-title-bar title="HubOn App" >
-        <button variant="primary" onClick={generateLocation}>
-          Sync Locations
-        </button>
-      </ui-title-bar>
+    <Page
+      title="HubOn Delivery App"
+      primaryAction={{
+        content: 'Active HubOn Delivery',
+        onAction: generateLocation,
+        loading: isLoadingSync
+      }
+      }
+    >
       <Layout>
+        {showBannerElement}
         <Layout.Section>
           <Card>
             <VerticalStack gap="5">

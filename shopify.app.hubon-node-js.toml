@@ -1,0 +1,27 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+name = "HubOn Node Js"
+client_id = "c548eac429206c9553a0f43be2ceb63e"
+application_url = "https://tribal-laptops-ranch-batman.trycloudflare.com"
+embedded = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_products,write_products,read_themes,write_themes,read_customers,read_orders,write_delivery_customizations,read_delivery_customizations,write_locations,read_shipping,write_shipping,write_metaobject_definitions,write_metaobjects,write_orders"
+
+[auth]
+redirect_urls = [
+  "https://tribal-laptops-ranch-batman.trycloudflare.com/auth/callback",
+  "https://tribal-laptops-ranch-batman.trycloudflare.com/auth/shopify/callback",
+  "https://tribal-laptops-ranch-batman.trycloudflare.com/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2023-07"
+
+[pos]
+embedded = false
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "hubonappdemo.myshopify.com"
