@@ -71,12 +71,15 @@ export async function action({ request }) {
   if (hasHubonKey) {
     console.log('At least one node has the key "hubon".');
   } else {
+    // add meta field order
     const addMetaFieldOrder = await admin.graphql(
       `mutation CreateMetafieldDefinition($definition: MetafieldDefinitionInput!) {
         metafieldDefinitionCreate(definition: $definition) {
           createdDefinition {
             id
             name
+            namespace
+            key
           }
           userErrors {
             field
@@ -87,7 +90,7 @@ export async function action({ request }) {
       }`, {
       variables: {
         "definition": {
-          "name": "HubOn MetaField",
+          "name": metaFieldName,
           "namespace": "custom",
           "key": "hubon",
           "description": "A hub of used to make the order.",
@@ -98,7 +101,34 @@ export async function action({ request }) {
     });
 
     const responseMetaField = await addMetaFieldOrder.json();
-    console.log(responseMetaField);
+    const idMetaFieldHubOn = responseMetaField.data.metafieldDefinitionCreate?.createdDefinition?.id;
+
+    // pin hubon meta field order
+    if (idMetaFieldHubOn) {
+      const pinMetaFieldOrder = await admin.graphql(
+        `mutation metafieldDefinitionPin($definitionId: ID!) {
+          metafieldDefinitionPin(definitionId: $definitionId) {
+            pinnedDefinition {
+              name
+              key
+              namespace
+              pinnedPosition
+            }
+            userErrors {
+              field
+              message
+            }
+          }
+        }`, {
+        variables: {
+          "definitionId": idMetaFieldHubOn
+        }
+      });
+
+      const responsePinMetaField = await pinMetaFieldOrder.json();
+      console.log(responsePinMetaField);
+    }
+    console.log(responseMetaField.data.metafieldDefinitionCreate.createdDefinition.id);
   }
   console.log("---------========SUCCESS========---------")
 
@@ -351,11 +381,10 @@ export default function Index() {
     <Page
       title="HubOn Delivery App"
       primaryAction={{
-        content: 'Active HubOn Delivery',
+        content: 'Sycn HubOn Delivery',
         onAction: generateLocation,
         loading: isLoadingSync
-      }
-      }
+      }}
     >
       <Layout>
         {showBannerElement}
@@ -366,7 +395,7 @@ export default function Index() {
                 <div className="mb-4">
                   <div className="flex items-center gap-1 mb-2">
                     <FilterMajor width="24" />
-                    <Text as="p">Filter</Text>
+                    <Text as="h2" variant="headingMd">Filter</Text>
                   </div>
                   <Divider />
                 </div>
@@ -432,7 +461,7 @@ export default function Index() {
                     <Text as="h2" variant="headingMd">HubOn Price</Text>
                     <VerticalStack gap="2">
                       <Divider />
-                      {data?.prices.map((item) =>
+                      {data?.prices.map((item, index) =>
                       (
                         <Fragment key={item.id}>
                           <HorizontalStack align="space-between">
@@ -442,7 +471,7 @@ export default function Index() {
                             </div>
                             <p>{item.description}</p>
                           </HorizontalStack>
-                          <Divider />
+                          {index === 0 && (<Divider />)}
                         </Fragment>
                       ))}
 
