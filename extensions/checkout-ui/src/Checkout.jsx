@@ -4,7 +4,15 @@ import {
   BlockStack,
   useApplyMetafieldsChange,
   useMetafield,
-  Select, SkeletonText, Text, useApplyAttributeChange, ScrollView, View, TextField, Checkbox, ListItem, List, Choice, ChoiceList, useCustomer, useMetafields, useCheckoutSettings, useApplyShippingAddressChange, useShippingAddress, useShop, useApi, TextBlock, Image, InlineStack, Icon, Banner, Spinner, Grid,
+  Text,
+  ScrollView,
+  TextField,
+  Choice,
+  ChoiceList,
+  useApplyShippingAddressChange,
+  TextBlock,
+  Banner,
+  SkeletonTextBlock,
 } from "@shopify/ui-extensions-react/checkout";
 
 
@@ -62,9 +70,9 @@ function App() {
     // Define the new shipping address object
     const newShippingAddress = {
       name: jsonParse.name,
-      firstName: 'John',
+      firstName: jsonParse.name,
       lastName: 'Doe',
-      address1: '123 New Street',
+      address1: jsonParse.address,
       address2: undefined,
       city: 'Cityville',
       province: 'PV',
@@ -90,6 +98,7 @@ function App() {
       });
     }
   }
+
   // Render the extension components
   return (
     <BlockStack>
@@ -98,7 +107,10 @@ function App() {
       </Text>
       <TextField label="Search hub by name, zipcode, city, or address" value={search} onChange={onChangeSearch} />
       {isLoading ?
-        <Spinner />
+        <>
+          <SkeletonTextBlock />
+          <SkeletonTextBlock />
+        </>
         : data?.hubs?.length > 0 ? (
           <ScrollView maxBlockSize={250}>
             <ChoiceList

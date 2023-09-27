@@ -33,7 +33,7 @@ import { getHubApi, getHubPriceApi } from "~/api";
 import { DetailedPopUpMajor, FilterMajor } from "@shopify/polaris-icons";
 
 export const loader = async ({ request }) => {
-  const { session, } = await authenticate.admin(request);
+  const { session, admin } = await authenticate.admin(request);
   const shop = session.shop;
   const accessToken = session.accessToken;
   const searchParams = new URLSearchParams(request.url.split('?')[1] || '');
@@ -42,7 +42,18 @@ export const loader = async ({ request }) => {
   const search = searchParams.get('search') || "";
   const query = { page_size, page, search }
 
-  return json({ shop, query, accessToken, session });
+  // get carrier services
+  const responseGetCarrierServices = await admin.rest.resources.CarrierService.all({ session: session })
+  const jsonDataCarrireServices = responseGetCarrierServices.data;
+
+  let hasHubonDelivery = false;
+  // check carrier services
+  if (jsonDataCarrireServices) {
+    const hubonDeliveryService = "HubOn Delivery";
+    hasHubonDelivery = responseGetCarrierServices.data?.some((item) => item.name === hubonDeliveryService);
+  }
+
+  return json({ shop, query, accessToken, session, hasHubonDelivery });
 };
 
 export async function action({ request }) {
@@ -143,7 +154,7 @@ export async function action({ request }) {
     const hubonCallbackUrl = 'https://testing-app.balibecikwedding.com/api/callback';
     const hasHubonDelivery = responseGetCarrierServices.data?.some((item) => item.name === hubonDeliveryService);
     if (hasHubonDelivery) {
-      // const response = await admin.rest.resources.CarrierService.delete({ session: session, id: 83630686530 })
+      // const response = await admin.rest.resources.CarrierService.delete({ session: session, id: 83991396674 })
       console.log('HubOn Delivery Available');
       // console.log(response);
       // console.log('HubOn Delivery Available');
@@ -321,7 +332,7 @@ function DisplayObject(props) {
   return renderObject(data);
 }
 export default function Index() {
-  const { query } = useLoaderData();
+  const { query, hasHubonDelivery } = useLoaderData();
 
   const submit = useSubmit();
 
@@ -333,6 +344,7 @@ export default function Index() {
   const showBannerElement = showBanner ? <Layout.Section>
     <Banner title="HubOn Delivery" status="success" onDismiss={toggleBanner}>
       <p>HubOn delivery configured successfully!</p>
+      <p>Now you can add HubOn Delivery in Shipping and delivery</p>
     </Banner>
   </Layout.Section> : null;
 
@@ -381,9 +393,10 @@ export default function Index() {
     <Page
       title="HubOn Delivery App"
       primaryAction={{
-        content: 'Sycn HubOn Delivery',
+        content: 'Active HubOn Delivery',
         onAction: generateLocation,
-        loading: isLoadingSync
+        loading: isLoadingSync,
+        disabled: hasHubonDelivery,
       }}
     >
       <Layout>
@@ -486,7 +499,7 @@ export default function Index() {
                   Contact Us
                 </Text>
                 <Divider />
-                <Link url="https://testing.com">
+                <Link url="https://testing.com" target="_blank">
                   admin@testing.com
                 </Link>
                 <Link
@@ -499,7 +512,7 @@ export default function Index() {
                   url="https://testing.com/legal/terms-of-use"
                   target="_blank"
                 >
-                  Privacy Policy
+                  Privacy policy
                 </Link>
               </VerticalStack>
             </Card>

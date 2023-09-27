@@ -2,7 +2,7 @@
 
 name = "HubOn Node Js"
 client_id = "c548eac429206c9553a0f43be2ceb63e"
-application_url = "https://phillips-nn-professionals-antibody.trycloudflare.com"
+application_url = "https://affect-vic-exterior-characterized.trycloudflare.com"
 embedded = true
 
 [access_scopes]
@@ -11,9 +11,9 @@ scopes = "read_products,write_products,read_themes,write_themes,read_customers,r
 
 [auth]
 redirect_urls = [
-  "https://phillips-nn-professionals-antibody.trycloudflare.com/auth/callback",
-  "https://phillips-nn-professionals-antibody.trycloudflare.com/auth/shopify/callback",
-  "https://phillips-nn-professionals-antibody.trycloudflare.com/api/auth/callback"
+  "https://affect-vic-exterior-characterized.trycloudflare.com/auth/callback",
+  "https://affect-vic-exterior-characterized.trycloudflare.com/auth/shopify/callback",
+  "https://affect-vic-exterior-characterized.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

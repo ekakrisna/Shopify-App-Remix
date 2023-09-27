@@ -2621,7 +2621,7 @@
           var HostPortal = 4;
           var HostComponent = 5;
           var HostText = 6;
-          var Fragment = 7;
+          var Fragment2 = 7;
           var Mode = 8;
           var ContextConsumer = 9;
           var ContextProvider = 10;
@@ -6075,7 +6075,7 @@
               }
             }
             function updateFragment2(returnFiber, current2, fragment, lanes, key) {
-              if (current2 === null || current2.tag !== Fragment) {
+              if (current2 === null || current2.tag !== Fragment2) {
                 var created = createFiberFromFragment(fragment, returnFiber.mode, lanes, key);
                 created.return = returnFiber;
                 return created;
@@ -6444,7 +6444,7 @@
               while (child !== null) {
                 if (child.key === key) {
                   switch (child.tag) {
-                    case Fragment: {
+                    case Fragment2: {
                       if (element.type === REACT_FRAGMENT_TYPE) {
                         deleteRemainingChildren(returnFiber, child.sibling);
                         var existing = useFiber(child, element.props.children);
@@ -10206,7 +10206,7 @@
                 var _resolvedProps2 = workInProgress2.elementType === type ? _unresolvedProps2 : resolveDefaultProps(type, _unresolvedProps2);
                 return updateForwardRef(current2, workInProgress2, type, _resolvedProps2, renderLanes2);
               }
-              case Fragment:
+              case Fragment2:
                 return updateFragment(current2, workInProgress2, renderLanes2);
               case Mode:
                 return updateMode(current2, workInProgress2, renderLanes2);
@@ -10566,7 +10566,7 @@
               case SimpleMemoComponent:
               case FunctionComponent:
               case ForwardRef:
-              case Fragment:
+              case Fragment2:
               case Mode:
               case Profiler:
               case ContextConsumer:
@@ -15053,7 +15053,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
             return fiber;
           }
           function createFiberFromFragment(elements, mode, lanes, key) {
-            var fiber = createFiber(Fragment, elements, key, mode);
+            var fiber = createFiber(Fragment2, elements, key, mode);
             fiber.lanes = lanes;
             return fiber;
           }
@@ -18078,8 +18078,8 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
   // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/ScrollView/ScrollView.mjs
   var ScrollView = createRemoteComponent("ScrollView");
 
-  // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/Spinner/Spinner.mjs
-  var Spinner = createRemoteComponent("Spinner");
+  // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/SkeletonTextBlock/SkeletonTextBlock.mjs
+  var SkeletonTextBlock = createRemoteComponent("SkeletonTextBlock");
 
   // node_modules/@shopify/ui-extensions/build/esm/surfaces/checkout/components/Text/Text.mjs
   var Text = createRemoteComponent("Text");
@@ -18407,8 +18407,8 @@ ${errorInfo.componentStack}`);
   // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/ScrollView/ScrollView.mjs
   var ScrollView2 = createRemoteReactComponent(ScrollView);
 
-  // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/Spinner/Spinner.mjs
-  var Spinner2 = createRemoteReactComponent(Spinner);
+  // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/SkeletonTextBlock/SkeletonTextBlock.mjs
+  var SkeletonTextBlock2 = createRemoteReactComponent(SkeletonTextBlock);
 
   // extensions/checkout-ui/node_modules/@shopify/ui-extensions-react/build/esm/surfaces/checkout/components/Text/Text.mjs
   var Text2 = createRemoteReactComponent(Text);
@@ -18562,9 +18562,9 @@ ${errorInfo.componentStack}`);
       const jsonParse = JSON.parse(value);
       const newShippingAddress = {
         name: jsonParse.name,
-        firstName: "John",
+        firstName: jsonParse.name,
         lastName: "Doe",
-        address1: "123 New Street",
+        address1: jsonParse.address,
         address2: void 0,
         city: "Cityville",
         province: "PV",
@@ -18590,7 +18590,10 @@ ${errorInfo.componentStack}`);
     return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(BlockStack2, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Text2, { size: "large", emphasis: "bold", children: "HubOn delivery" }),
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(TextField2, { label: "Search hub by name, zipcode, city, or address", value: search, onChange: onChangeSearch }),
-      isLoading ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Spinner2, {}) : ((_a = data == null ? void 0 : data.hubs) == null ? void 0 : _a.length) > 0 ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(ScrollView2, { maxBlockSize: 250, children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+      isLoading ? /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(SkeletonTextBlock2, {}),
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(SkeletonTextBlock2, {})
+      ] }) : ((_a = data == null ? void 0 : data.hubs) == null ? void 0 : _a.length) > 0 ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(ScrollView2, { maxBlockSize: 250, children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
         ChoiceList2,
         {
           name: "hubon",
@@ -18612,3 +18615,4 @@ ${errorInfo.componentStack}`);
     ] });
   }
 })();
+//# sourceMappingURL=checkout-ui.js.map
