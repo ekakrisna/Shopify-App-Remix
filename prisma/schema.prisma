@@ -19,6 +19,7 @@ model Session {
   expires     DateTime?
   accessToken String
   userId      BigInt?
+  hubonUserId Int?
 }
 
 model QRCode {

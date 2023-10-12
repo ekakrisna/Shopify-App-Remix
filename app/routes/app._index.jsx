@@ -25,33 +25,64 @@ import {
   Pagination,
   Modal,
   Banner,
+  FormLayout,
 } from "@shopify/polaris";
 
 import { authenticate } from "~/shopify.server";
 import { useCustomFetch } from "~/libs/dataFetch";
 import { getHubApi, getHubPriceApi } from "~/api";
-import { DetailedPopUpMajor, FilterMajor } from "@shopify/polaris-icons";
+import {
+  DetailedPopUpMajor,
+  EditMajor,
+  FilterMajor,
+} from "@shopify/polaris-icons";
 
 export const loader = async ({ request }) => {
   const { session, admin } = await authenticate.admin(request);
+  console.log(session);
   const shop = session.shop;
   const accessToken = session.accessToken;
-  const searchParams = new URLSearchParams(request.url.split('?')[1] || '');
-  const page_size = Number(searchParams.get('page_size')) || 10;
-  const page = Number(searchParams.get('page')) || 1;
-  const search = searchParams.get('search') || "";
-  const query = { page_size, page, search }
+  const searchParams = new URLSearchParams(request.url.split("?")[1] || "");
+  const page_size = Number(searchParams.get("page_size")) || 10;
+  const page = Number(searchParams.get("page")) || 1;
+  const search = searchParams.get("search") || "";
+  const query = { page_size, page, search };
+
+  // get shop detail
+  const responseShopDetail = await admin.rest.resources.Shop.all({
+    session: session,
+  });
+
+  const getOrders = await admin.graphql(
+    `query {
+      orders(first:200) {
+        edges {
+          node {
+            id
+            name
+          }
+        }
+      }
+    }`
+  );
+
+  const responseMetaFields = await getOrders.json();
+
+  console.log("getOrders");
+  console.log(responseMetaFields.data.orders.edges);
+  console.log("getOrders");
 
   // get carrier services
-  const responseGetCarrierServices = await admin.rest.resources.CarrierService.all({ session: session })
+  const responseGetCarrierServices =
+    await admin.rest.resources.CarrierService.all({ session: session });
   const jsonDataCarrireServices = responseGetCarrierServices.data;
 
   let hasHubonDelivery = false;
   // check carrier services
-  if (jsonDataCarrireServices) {
-    const hubonDeliveryService = "HubOn Delivery";
-    hasHubonDelivery = responseGetCarrierServices.data?.some((item) => item.name === hubonDeliveryService);
-  }
+  // if (jsonDataCarrireServices) {
+  //   const hubonDeliveryService = "HubOn Delivery";
+  //   hasHubonDelivery = responseGetCarrierServices.data?.some((item) => item.name === hubonDeliveryService);
+  // }
 
   return json({ shop, query, accessToken, session, hasHubonDelivery });
 };
@@ -70,15 +101,18 @@ export async function action({ request }) {
       }
     }`
   );
-  console.log("---------========SUCCESS========---------")
+  console.log("---------========SUCCESS========---------");
   // Response get metafields
   const responseMetaFields = await getMetaFields.json();
   // Extract the relevant data
-  const metafieldDefinitions = responseMetaFields.data.metafieldDefinitions.edges.map((edge) => edge.node);
+  const metafieldDefinitions =
+    responseMetaFields.data.metafieldDefinitions.edges.map((edge) => edge.node);
   // const meta field name
-  const metaFieldName = "HubOn MetaField"
+  const metaFieldName = "HubOn MetaField";
   // Check if any node has the key "hubon"
-  const hasHubonKey = metafieldDefinitions.some((node) => node.name === metaFieldName);
+  const hasHubonKey = metafieldDefinitions.some(
+    (node) => node.name === metaFieldName
+  );
   if (hasHubonKey) {
     console.log('At least one node has the key "hubon".');
   } else {
@@ -98,21 +132,24 @@ export async function action({ request }) {
             code
           }
         }
-      }`, {
-      variables: {
-        "definition": {
-          "name": metaFieldName,
-          "namespace": "custom",
-          "key": "hubon",
-          "description": "A hub of used to make the order.",
-          "type": "json",
-          "ownerType": "ORDER"
-        }
+      }`,
+      {
+        variables: {
+          definition: {
+            name: metaFieldName,
+            namespace: "custom",
+            key: "hubon",
+            description: "A hub of used to make the order.",
+            type: "json",
+            ownerType: "ORDER",
+          },
+        },
       }
-    });
+    );
 
     const responseMetaField = await addMetaFieldOrder.json();
-    const idMetaFieldHubOn = responseMetaField.data.metafieldDefinitionCreate?.createdDefinition?.id;
+    const idMetaFieldHubOn =
+      responseMetaField.data.metafieldDefinitionCreate?.createdDefinition?.id;
 
     // pin hubon meta field order
     if (idMetaFieldHubOn) {
@@ -130,48 +167,57 @@ export async function action({ request }) {
               message
             }
           }
-        }`, {
-        variables: {
-          "definitionId": idMetaFieldHubOn
+        }`,
+        {
+          variables: {
+            definitionId: idMetaFieldHubOn,
+          },
         }
-      });
+      );
 
       const responsePinMetaField = await pinMetaFieldOrder.json();
       console.log(responsePinMetaField);
     }
-    console.log(responseMetaField.data.metafieldDefinitionCreate.createdDefinition.id);
+    console.log(
+      responseMetaField.data.metafieldDefinitionCreate.createdDefinition.id
+    );
   }
-  console.log("---------========SUCCESS========---------")
+  console.log("---------========SUCCESS========---------");
 
   // get carrier services
-  const responseGetCarrierServices = await admin.rest.resources.CarrierService.all({ session: session })
+  const responseGetCarrierServices =
+    await admin.rest.resources.CarrierService.all({ session: session });
   const jsonDataCarrireServices = responseGetCarrierServices.data;
   console.log("=============jsonDataCarrireServices=================");
   console.log(jsonDataCarrireServices);
   console.log("=============jsonDataCarrireServices=================");
   if (jsonDataCarrireServices) {
     const hubonDeliveryService = "HubOn Delivery";
-    const hubonCallbackUrl = 'https://testing-app.balibecikwedding.com/api/callback';
-    const hasHubonDelivery = responseGetCarrierServices.data?.some((item) => item.name === hubonDeliveryService);
+    const hubonCallbackUrl =
+      "https://testing-app.balibecikwedding.com/api/callback";
+    const hasHubonDelivery = responseGetCarrierServices.data?.some(
+      (item) => item.name === hubonDeliveryService
+    );
     if (hasHubonDelivery) {
       // const response = await admin.rest.resources.CarrierService.delete({ session: session, id: 83991396674 })
-      console.log('HubOn Delivery Available');
+      console.log("HubOn Delivery Available");
       // console.log(response);
       // console.log('HubOn Delivery Available');
     } else {
-      const carrierService = new admin.rest.resources.CarrierService({ session: session });
+      const carrierService = new admin.rest.resources.CarrierService({
+        session: session,
+      });
       carrierService.name = hubonDeliveryService;
       carrierService.callback_url = hubonCallbackUrl;
       carrierService.service_discovery = true;
       const responseCarrierService = await carrierService.save({
-        update: true
-      })
+        update: true,
+      });
       // const dataCarrierService = await responseCarrierService;
       console.log("=============dataCarrierService=================");
       console.log(responseCarrierService);
       console.log("=============dataCarrierService=================");
     }
-
   }
   // const response = await carrier_service.save({
   //   update: true
@@ -203,8 +249,8 @@ export async function action({ request }) {
   // return redirect("/app");
   const response = {
     data: true,
-    statusCode: 200
-  }
+    statusCode: 200,
+  };
   return json({ response });
 }
 
@@ -245,7 +291,11 @@ const HubsTable = ({ hubs, handleModal }) => (
     selectable={false}
   >
     {hubs.map((hub) => (
-      <HubsTableRow key={hub.id} hub={hub} handleModal={() => handleModal(hub)} />
+      <HubsTableRow
+        key={hub.id}
+        hub={hub}
+        handleModal={() => handleModal(hub)}
+      />
     ))}
   </IndexTable>
 );
@@ -259,20 +309,21 @@ const HubsTableRow = ({ hub, handleModal }) => (
       <Link url={`${hub.id}`}>{truncate(hub.name)}</Link>
     </IndexTable.Cell>
     <IndexTable.Cell>
-      <p title={hub.address}>
-        {truncate(hub.address)}
-      </p>
+      <p title={hub.address}>{truncate(hub.address)}</p>
     </IndexTable.Cell>
     <IndexTable.Cell>
       <p className="capitalize">{truncate(hub.status)}</p>
     </IndexTable.Cell>
     <IndexTable.Cell>
-      <p title={hub.contact}>
-        {truncate(hub.contact)}
-      </p>
+      <p title={hub.contact}>{truncate(hub.contact)}</p>
     </IndexTable.Cell>
     <IndexTable.Cell>
-      <Button primary size="slim" icon={DetailedPopUpMajor} onClick={() => handleModal(hub)} />
+      <Button
+        primary
+        size="slim"
+        icon={DetailedPopUpMajor}
+        onClick={() => handleModal(hub)}
+      />
     </IndexTable.Cell>
   </IndexTable.Row>
 );
@@ -302,7 +353,7 @@ function DisplayObject(props) {
               </ul>
             </div>
           );
-        } else if (typeof value === 'object') {
+        } else if (typeof value === "object") {
           // If the value is an object, recursively render it
           elements.push(
             <div key={key}>
@@ -332,25 +383,31 @@ function DisplayObject(props) {
   return renderObject(data);
 }
 export default function Index() {
-  const { query, hasHubonDelivery } = useLoaderData();
+  const { query, hasHubonDelivery, shop } = useLoaderData();
+  console.log(shop);
 
   const submit = useSubmit();
 
   const response = useActionData()?.response || { data: false };
 
   const [showBanner, setShowBanner] = useState(response?.data);
-  const toggleBanner = useCallback(() => setShowBanner((active) => !active), []);
+  const toggleBanner = useCallback(
+    () => setShowBanner((active) => !active),
+    []
+  );
 
-  const showBannerElement = showBanner ? <Layout.Section>
-    <Banner title="HubOn Delivery" status="success" onDismiss={toggleBanner}>
-      <p>HubOn delivery configured successfully!</p>
-      <p>Now you can add HubOn Delivery in Shipping and delivery</p>
-    </Banner>
-  </Layout.Section> : null;
+  const showBannerElement = showBanner ? (
+    <Layout.Section>
+      <Banner title="HubOn Delivery" status="success" onDismiss={toggleBanner}>
+        <p>HubOn delivery configured successfully!</p>
+        <p>Now you can add HubOn Delivery in Shipping and delivery</p>
+      </Banner>
+    </Layout.Section>
+  ) : null;
 
   useEffect(() => {
-    if (response.data) setShowBanner(response.data)
-  }, [response])
+    if (response.data) setShowBanner(response.data);
+  }, [response]);
 
   const nav = useNavigation();
   const isLoadingSync =
@@ -359,12 +416,15 @@ export default function Index() {
 
   const navigate = useNavigate();
 
-  const [active, setActive] = useState(false);
   const [hubDetail, setHubDetail] = useState(null);
-  const handleModal = useCallback((data) => {
-    setHubDetail(data);
-    setActive(!active);
-  }, [active]);
+  const [active, setActive] = useState(false);
+  const handleModal = useCallback(
+    (data) => {
+      setHubDetail(data);
+      setActive(!active);
+    },
+    [active]
+  );
 
   const useFetchPrice = useCustomFetch("myQueryKey", getHubPriceApi);
   const { isLoading, data } = useFetchPrice();
@@ -373,32 +433,51 @@ export default function Index() {
   const [hubs, setHubs] = useState([]);
   const [meta, setMeta] = useState({});
 
-  const useFetchHubs = useCustomFetch(["myQueryKey", filter], () => getHubApi(filter), {
-    // retry: 3,
-    onSuccess: (data) => {
-      setHubs(data.hubs);
-      setMeta(data.meta);
-    },
-    onError: (error) => {
-      console.error('Fetch error:', error);
-    },
-  });
+  const useFetchHubs = useCustomFetch(
+    ["myQueryKey", filter],
+    () => getHubApi(filter),
+    {
+      // retry: 3,
+      onSuccess: (data) => {
+        setHubs(data.hubs);
+        setMeta(data.meta);
+      },
+      onError: (error) => {
+        console.error("Fetch error:", error);
+      },
+    }
+  );
 
   const { isLoading: isLoadingHubs } = useFetchHubs();
 
-  const handleFilter = useCallback((newValue) => setFilter((prev) => ({ ...prev, search: newValue })), []);
-  const handleClearSearch = () => setFilter((prev) => ({ ...prev, search: "" }));
+  const handleFilter = useCallback(
+    (newValue) => setFilter((prev) => ({ ...prev, search: newValue })),
+    []
+  );
+  const handleClearSearch = () =>
+    setFilter((prev) => ({ ...prev, search: "" }));
+
+  const [showModalPrice, setShowModalPrice] = useState(false);
+  const handleModalPrice = () => setShowModalPrice((prev) => !prev);
 
   return (
     <Page
       title="HubOn Delivery App"
       primaryAction={{
-        content: 'Active HubOn Delivery',
+        content: "Active HubOn Delivery",
         onAction: generateLocation,
         loading: isLoadingSync,
         disabled: hasHubonDelivery,
       }}
     >
+      {/* <ui-title-bar>
+        <button onclick="console.log('Secondary action')">
+          Secondary action
+        </button>
+        <button variant="primary" onclick="console.log('Primary action')">
+          Primary action
+        </button>
+      </ui-title-bar> */}
       <Layout>
         {showBannerElement}
         <Layout.Section>
@@ -408,7 +487,9 @@ export default function Index() {
                 <div className="mb-4">
                   <div className="flex items-center gap-1 mb-2">
                     <FilterMajor width="24" />
-                    <Text as="h2" variant="headingMd">Filter</Text>
+                    <Text as="h2" variant="headingMd">
+                      Filter
+                    </Text>
                   </div>
                   <Divider />
                 </div>
@@ -425,7 +506,10 @@ export default function Index() {
               <VerticalStack gap="2">
                 {isLoadingHubs ? (
                   <VerticalStack inlineAlign="center">
-                    <Spinner accessibilityLabel="Spinner example" size="small" />
+                    <Spinner
+                      accessibilityLabel="Spinner example"
+                      size="small"
+                    />
                   </VerticalStack>
                 ) : hubs.length === 0 ? (
                   <EmptyHubState onAction={() => navigate("hubs/new")} />
@@ -435,9 +519,19 @@ export default function Index() {
                     <div className="float-right my-4">
                       <Pagination
                         hasPrevious={meta?.prev_page > 0}
-                        onPrevious={() => setFilter(state => ({ ...state, page: state.page - 1 }))}
+                        onPrevious={() =>
+                          setFilter((state) => ({
+                            ...state,
+                            page: state.page - 1,
+                          }))
+                        }
                         hasNext={meta?.next_page}
-                        onNext={() => setFilter(state => ({ ...state, page: state.page + 1 }))}
+                        onNext={() =>
+                          setFilter((state) => ({
+                            ...state,
+                            page: state.page + 1,
+                          }))
+                        }
                       />
                     </div>
                     {hubDetail && (
@@ -459,35 +553,88 @@ export default function Index() {
         </Layout.Section>
         <Layout.Section secondary>
           <VerticalStack gap="5">
-            {/* <Card>
-              <Button loading={isLoading || isLoadingHubs || isLoadingLocation} primary onClick={generateLocation} fullWidth>
-                Sync Locations
-              </Button>
-            </Card> */}
             <Card>
-              <VerticalStack gap="2" inlineAlign={isLoading ? "center" : "stretch"}>
-                {isLoading ? <Spinner /> : (
+              <VerticalStack
+                gap="2"
+                inlineAlign={isLoading ? "center" : "stretch"}
+              >
+                {isLoading ? (
+                  <Spinner />
+                ) : (
                   <>
-                    {/* <div className="flex items-center gap-1">
-                      <CashDollarMajor width="24" />
-                    </div> */}
-                    <Text as="h2" variant="headingMd">HubOn Price</Text>
+                    <div className="flex items-center justify-between gap-1">
+                      <Text as="h2" variant="headingMd">
+                        HubOn Price
+                      </Text>
+                      <Button
+                        plain
+                        icon={EditMajor}
+                        size="slim"
+                        onClick={handleModalPrice}
+                      >
+                        Change price
+                      </Button>
+                    </div>
+                    <Modal
+                      open={showModalPrice}
+                      onClose={handleModalPrice}
+                      title="HubOn price"
+                    >
+                      <Modal.Section>
+                        <FormLayout>
+                          <TextField
+                            type="text"
+                            name="shop"
+                            value={shop}
+                            label="Shop domain"
+                            placeholder="example.myshopify.com"
+                            autoComplete="on"
+                          />
+                          <TextField
+                            type="text"
+                            name="phone_number"
+                            label="Phone number"
+                            placeholder="(555) 555-1234"
+                            autoComplete="on"
+                          />
+                          <TextField
+                            type="number"
+                            name="first_bag"
+                            label="First Bag"
+                            placeholder="10"
+                            autoComplete="off"
+                          />
+                          <TextField
+                            type="number"
+                            name="additional_bag"
+                            label="Additional Bag"
+                            placeholder="10"
+                            autoComplete="off"
+                          />
+                          <div className="flex justify-end">
+                            <Button primary>Update</Button>
+                          </div>
+                        </FormLayout>
+                      </Modal.Section>
+                    </Modal>
                     <VerticalStack gap="2">
                       <Divider />
-                      {data?.prices.map((item, index) =>
-                      (
+                      {data?.prices.map((item, index) => (
                         <Fragment key={item.id}>
                           <HorizontalStack align="space-between">
                             <div className="flex justify-between w-full mb-2">
-                              <p className="font-semibold capitalize">{item.type.replace("_", " ")}</p>
-                              <p className="font-semibold capitalize">${item.value}</p>
+                              <p className="font-semibold capitalize">
+                                {item.type.replace("_", " ")}
+                              </p>
+                              <p className="font-semibold capitalize">
+                                ${item.value}
+                              </p>
                             </div>
                             <p>{item.description}</p>
                           </HorizontalStack>
-                          {index === 0 && (<Divider />)}
+                          {index === 0 && <Divider />}
                         </Fragment>
                       ))}
-
                     </VerticalStack>
                   </>
                 )}
@@ -518,8 +665,7 @@ export default function Index() {
             </Card>
           </VerticalStack>
         </Layout.Section>
-      </Layout >
-
-    </Page >
+      </Layout>
+    </Page>
   );
 }

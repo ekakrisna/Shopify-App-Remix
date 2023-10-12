@@ -10,12 +10,12 @@ export const links = () => [{ rel: "stylesheet", href: polarisStyles }];
 
 export async function loader({ request }) {
   await authenticate.admin(request);
-  const apiKey = process.env.SHOPIFY_API_KEY
-  const functionId = process.env.SHOPIFY_DELIVERY_CUSTOMIZATION_ID
-  return json({ apiKey, functionId });
+  const apiKey = process.env.SHOPIFY_API_KEY;
+  return json({ apiKey });
 }
+
 export default function App() {
-  const { apiKey, functionId } = useLoaderData();
+  const { apiKey } = useLoaderData();
 
   return (
     <AppProvider isEmbeddedApp apiKey={apiKey}>
@@ -23,10 +23,8 @@ export default function App() {
         <Link to="/app" rel="home">
           Home
         </Link>
-        <Link to="/app/qrcodes">Qrcodes</Link>
-        <Link to="/app/hubs">Hubs</Link>
-        <Link to="/app/locations">Locations</Link>
-        <Link to={`/app/delivery-customization/${functionId}`}>Delivery</Link>
+        <Link to="/app/orders">Orders</Link>
+        <Link to="/app/settings">Settings</Link>
       </ui-nav-menu>
       <Outlet />
     </AppProvider>
